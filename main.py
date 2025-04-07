@@ -1,5 +1,4 @@
-from fastapi import FastAPI, Query
-from typing import Annotated
+from fastapi import FastAPI, Query, Path,HTTPException
 
 app = FastAPI()
 
@@ -28,11 +27,6 @@ items = [
     "name": "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet",
     "price": 695,
     "description": "From our Legends Collection, the Naga was inspired by the mythical water dragon that protects the ocean's pearl. Wear facing inward to be bestowed with love and abundance, or outward for protection."
-  },
-  {
-    "name": "Solid Gold Petite Micropave ",
-    "price": 168,
-    "description": "Satisfaction Guaranteed. Return or exchange any order within 30 days.Designed and sold by Hafeez Center in the United States. Satisfaction Guaranteed. Return or exchange any order within 30 days."
   },
   {
     "name": "White Gold Plated Princess",
@@ -78,6 +72,11 @@ items = [
     "name": "BIYLACLESEN Women's 3-in-1 Snowboard Jacket Winter Coats",
     "price": 56.99,
     "description": "Note:The Jackets is US standard size, Please choose size as your usual wear Material: 100% Polyester; Detachable Liner Fabric: Warm Fleece. Detachable Functional Liner: Skin Friendly, Lightweigt and Warm.Stand Collar Liner jacket, keep you warm in cold weather. Zippered Pockets: 2 Zippered Hand Pockets, 2 Zippered Pockets on Chest (enough to keep cards or keys)and 1 Hidden Pocket Inside.Zippered Hand Pockets and Hidden Pocket keep your things secure. Humanized Design: Adjustable and Detachable Hood and Adjustable cuff to prevent the wind and water,for a comfortable fit. 3 in 1 Detachable Design provide more convenience, you can separate the coat and inner as needed, or wear it together. It is suitable for different season and help you adapt to different climates"
+  },
+  {
+    "name": "Solid Gold Petite Micropave ",
+    "price": 168,
+    "description": "Satisfaction Guaranteed. Return or exchange any order within 30 days.Designed and sold by Hafeez Center in the United States. Satisfaction Guaranteed. Return or exchange any order within 30 days."
   }
 ]
 
@@ -117,19 +116,9 @@ def get_items(name: str|None = Query(min_length=2, default=None), min_price: int
     else:
         return result_items
             
-    
-    
-    
-
-# @app.post("/t_square")
-# def t_square(a: Annotated[int, Query(ge=0)], b: Annotated[int, Query(ge=0)], c:Annotated[int, Query(ge=0)]):
-#     p = a+b+c
-#     if (a+b>c) and (b+c>a) and (a+c>b):
-#         h_p = p/2
-#         s = (h_p*(h_p-a)*(h_p-b)*(h_p-c))**(1/2)
-#         return {
-#             'perimetr' : p,
-#             'square': s
-#         }
-#     else:
-#         return 'Треугольника с указанными сторонами не существует'
+@app.get("/items/{item_id}")
+def get_item(item_id:int = Path(ge=0)):
+    if item_id >= len(items):
+        raise HTTPException(status_code=404, detail="Item not found")
+    else:
+        return items[item_id]
