@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, Path,HTTPException
+from fastapi import FastAPI, Query, Path,HTTPException, Body
 
 app = FastAPI()
 
@@ -80,8 +80,9 @@ items = [
   }
 ]
 
+
 @app.get("/items")
-def get_items(name: str|None = Query(min_length=2, default=None), min_price: int|None = Query(gt = 0, default=None), max_price: int|None = Query(gt=0, default=None), limit: int = Query(gt=0, default=10, lt=100)):
+def get_items(name: str|None = Query(min_length=2, default=None), min_price: float|None = Query(gt = 0, default=None), max_price: float|None = Query(gt=0, default=None), limit: int = Query(gt=0, default=10, lt=100)):
     res_name_items=[]
     result_items = []
 
@@ -122,3 +123,7 @@ def get_item(item_id:int = Path(ge=0)):
         raise HTTPException(status_code=404, detail="Item not found")
     else:
         return items[item_id]
+    
+@app.post("/items/")
+def add_item(name: str = Body(min_length=2, max_length=100), price: float = Body(gt=0), description: str|None = Body(max_length=500, default=None)):
+    return {'name':name, 'price':price, 'description':description}
